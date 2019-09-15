@@ -89,9 +89,11 @@
     <h2>Variant 4</h2>
     <p><b>Config columns:</b> none</p>
     <p><b>Table data:</b> array of object</p>
+    <p>Test slave component: randomize swap two line</p>
     <div id="tbl4">
         {{tbldata}}
         <tbl :data="tbldata" name="testtbl" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
+            <random></random>
         </tbl>
     </div>
 
@@ -144,6 +146,21 @@
             { id: 11, name: "Мария", family: "Иванова", country: "russia", town: "Шахты", img: "https://a.deviantart.net/avatars/d/i/digitaladoptables.jpg" }
         ];
 
+        var testTable4 = [
+                { id: 0, name: "John", family: "Smith", country: "usa", town: "Washington", img: "https://a.deviantart.net/avatars/m/r/mrburns-fanclub.jpg" },
+                { id: 1, name: "Pier", family: "Marten", country: "france", town: "Marcel", img: "https://iccup.com/upload/images/avatar/n1326946.jpg" },
+                { id: 2, name: "Иван", family: "Иванов", country: "russia", town: "Воронеж", img: "https://a.deviantart.net/avatars/c/u/cute-fuckin-animals.jpg" },
+                { id: 3, name: "Аристарх", family: "Кульман", country: "russia", town: "Гдов", img: "http://vetgalaxy.ru/media/widgetkit/2sldie-6a2f137848702ede04df3e82bc303547.jpg" },
+                { id: 4, name: "Станслав", family: "Курцевич", country: "russia", town: "Шахты", img: "https://a.deviantart.net/avatars/x/x/xxawesomeanimalsxx.jpg?8" },
+                { id: 5, name: "David", family: "Johnson", country: "usa", town: "Springfield", img: "https://a.deviantart.net/avatars/c/a/cats-wolfs.jpg" },
+                { id: 6, name: "Dale", family: "Piterson", country: "usa", town: "Denver", img: "https://a.deviantart.net/avatars/0/_/0-animal-lovers-0.jpg" },
+                { id: 7, name: "Петр", family: "Иванко", country: "russia", town: "Пермь", img: "http://rumata.info/images/2018/03/19/143622/thumb_koty-i-koshki_1.jpg" },
+                { id: 8, name: "Madeleine", family: "Samson", country: "france", town: "Marcel", img: "https://a.deviantart.net/avatars/c/r/crazy-cat-lady-group.jpg" },
+                { id: 9, name: "Renee", family: "Ringuette", country: "france", town: "Paris", img: "http://vetgalaxy.ru/media/widgetkit/2sldie-6a2f137848702ede04df3e82bc303547.jpg" },
+                { id: 10, name: "Ирина", family: "Симоненко", country: "russia", town: "Воронеж", img: "http://vetgalaxy.ru/media/widgetkit/2sldie-6a2f137848702ede04df3e82bc303547.jpg" },
+                { id: 11, name: "Мария", family: "Иванова", country: "russia", town: "Шахты", img: "https://a.deviantart.net/avatars/d/i/digitaladoptables.jpg" }
+            ];
+
         var columns1 = ["ID", "Name", "Family", "Country", "Town", "Blank field"];
         var columns2 = {
             'name': {
@@ -181,6 +198,7 @@
 
         // Start
         Vue.component("tbl", VueTable.Table());
+        Vue.component("random", VueTable.TestSlave());
 
         // Var 1
         var tbl1 = new Vue({
@@ -227,7 +245,7 @@
             var tbl4 = new Vue({
                 el: "#tbl4",
                 data: {
-                    tbldata: testTable3
+                    tbldata: testTable4
                 },
                 methods: {
                     changeCell(e) {

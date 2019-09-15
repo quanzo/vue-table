@@ -1,4 +1,6 @@
 <template>    
+    <div>
+    <slot name="before"></slot>
     <table :class="classes" :style="styles" cellspacing="0" cellpadding="0" @click="onEndEdit" @keyup.ctrl.90="onUndo">
       <thead v-if="colsType != 0">
       <tr>
@@ -7,6 +9,7 @@
       </th>
       </tr>
       </thead>
+      
       <tbody>
       <tr v-for="(line, lindex) in data" :key="lindex" :class="getRowClasses(lindex)">
           <td v-if="colsType == 2 || colsType == 1" v-for="(col, cindex) in columnsConfig" :key="cindex" @dblclick="onEditEnable({row:lindex, col:cindex})" :class="getCellClasses(lindex, cindex)">
@@ -26,6 +29,8 @@
       </tr>
       </tbody>
     </table>
+    <slot></slot>
+    </div>
 </template>
 
 <script>
@@ -36,8 +41,8 @@
 }*/
 const mixHtml = require("./html.mix.js");
 const undo = require("./undo.js");
-const input = require("./input.vue");
-const view = require("./view.vue");
+const input = require("./input-element.vue");
+const view = require("./view-element.vue");
 export default {
   name: "Table",
   mixins: [mixHtml.default],
@@ -158,13 +163,15 @@ export default {
         this.startEvent("event-sort-table", this.sort);
       }
     },
+
     /**
-     * Set cell state. Needed to cancel editing actions.
+     * Set cell state. Needed to cancel editing actions. Восстановление состояния. См onEditEnable
      * @param {object} state
      */
     restoreState(state) {
       this.data[state.row][state.col] = state.initial;
     },
+
     /**
      * Check enable edit column
      * @param {integer|string} col
@@ -181,6 +188,7 @@ export default {
       }
       return this.defEnableEdit;
     },
+
     /**
      * Cell is allowed to edit
      * @param {integer} row
@@ -209,6 +217,7 @@ export default {
         this.columnEditable(col)
       );
     },
+    
     /**
      *
      */
@@ -220,9 +229,11 @@ export default {
       }
       return this.defEnableSort;
     },
+
     /**
      * Show or not column in screen
      * @param {integer|string} cindex - column index in order
+     * @return {boolean}
      *
      */
     showColumn(cindex) {
@@ -234,24 +245,28 @@ export default {
       }
       return false;
     },
+
     /**
      * Return column name for output from index
      * @param {integer} index - column index in order
      * @return {string}
      */
     getColName(index) {
-      if (this.columns) {
-        let colData = this.columns[index];
-        if (typeof colData == "object") {
+      if (this.columnsConfig) {
+        if (typeof this.columnsConfig[index] != "undefined") {
+          let colData = this.columns[index];
           if (typeof colData.name == "string" && colData.name) {
             return colData.name;
           }
-          return index;
         }
-        return colData;
       }
       return index;
     },
+    /**
+     * Get column css classes. Calculate it.
+     * @param {mixed} col
+     * @return {string}
+     */
     getColClasses(col) {
       var classes = "";
       var idx = this.sort.findIndex(function(e, i, ar) {
@@ -265,6 +280,13 @@ export default {
     getRowClasses(row) {
       return "";
     },
+
+    /**
+     * Get cell css classes. Calculate it.
+     * @param {integer} row
+     * @param {mixed} col
+     * @return {string}
+     */
     getCellClasses(row, col) {
       let cls = "editable";
       if (!this.columnEditable(col)) {
@@ -272,6 +294,109 @@ export default {
       }
       return cls;
     },
+
+    /**
+     * Check present row in table
+     * @param {integer} row
+     * @param {mixed} col
+     * @return {boolean}
+     */
+    isRow(row) {
+      return typeof this.data[row] != "undefined";
+    },
+
+    /**
+     * Check present cell in table
+     * @param {integer} row
+     * @param {mixed} col
+     * @return {boolean}
+     */
+    isCell(row, col) {
+      if (this.isRow(row)) {
+        return typeof this.data[row][col] != "undefined";
+      }
+      return false;
+    },
+
+    /**
+     * Rows count
+     * @return {integer}
+     */
+    rows() {
+      if (Array.isArray(this.data)) {
+        return this.data.length;
+      }
+      return 0;
+    },
+
+    /**
+     * Get cell data
+     * @param {integer} row
+     * @param {mixed} col
+     * @return {mixed}
+     */
+    cell(row, col) {
+      if (this.isCell(row, col)) {
+        return this.data[row][col];
+      }
+      return null;
+    },
+
+    /**
+     * Get row data
+     * @param {integer} row
+     * @return {mixed}
+     */
+    row(row) {
+      if (this.isRow(row)) {
+        return this.data[row];
+      }
+      return null;
+    },
+
+    /**
+     * Set cell data
+     * @param {integer} row
+     * @param {mixed} col
+     * @param {mixed} value
+     * @return {boolean}
+     */
+    setCell(row, col, value) {
+      if (this.isCell(row, col)) {
+        this.$set(this.data[row], col, value);
+        //this.data[row][col] = value;
+        return true;
+      }
+      return false;
+    },
+
+    /**
+     * Set row
+     * @param {integer} row
+     * @param {mixed} value
+     * @return {boolean}
+     */
+    setRow(row, value) {
+      if (this.isRow(row)) {
+        this.$set(this.data, row, value);
+        //this.data[row] = value;
+        //console.log("sr",row, this.data[row]);
+        return true;
+      }
+      return false;
+    },
+
+    insertRow(afterRow, ...value) {
+      if (this.isRow(afterRow)) {
+        this.data.splice(afterRow+1, 0, ...value);
+      }
+    },
+    deleteRow(row, count = 1) {
+      if (this.isRow(row)) {
+        this.data.splice(row, count);
+      }
+    },
+
     /**
      * Load new table content
      * @param {array} table - new table
@@ -345,10 +470,19 @@ export default {
       load: this.load,
       getColumnConfig: function(col) {
         if (tbl.columnsConfig) {
-          return tbl.columnsConfig[col];  
+          return tbl.columnsConfig[col];
         }
         return {};
-      }
+      },
+      isRow: this.isRow,
+      isCell: this.isCell,
+      cell: this.cell,
+      setCell: this.setCell,
+      rows: this.rows,
+      row: this.row,
+      setRow: this.setRow,
+      insertRow: this.insertRow,
+      deleteRow: this.deleteRow
     };
   }
 };
