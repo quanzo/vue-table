@@ -1,0 +1,243 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@quanzo/vue-table"></script>
+    <script src="../dist/bundle.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <style>
+        table {
+            margin: 1em auto;
+        }
+
+        /*td, th{
+        padding:0.5em;
+        border: 1px solid rgb(163, 163, 163);
+        margin:0;
+    }
+    th{
+        background-color: rgb(75, 75, 75);
+        color: #fff;
+        font-size: 1.1em;
+    }*/
+
+        th.sort-asc {}
+
+        th.sort-asc:before {
+            content: "↓";
+        }
+
+        th.sort-desc {}
+
+        th.sort-desc:before {
+            content: "↑";
+        }
+
+        tr.hover {
+            background-color: rgb(202, 214, 203);
+        }
+
+        td.read-only {
+            background-color: #fafafa;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!--<div id="tbl00">
+        {{tbldata}}
+        <tbl :data="tbldata" name="testtbl" :columns="['id', 'name', 'country']" @event-end-edit-cell="changeCell">
+        </tbl>
+    </div>
+    <hr>-->
+    <h2>Variant 1</h2>
+    <p><b>Config columns:</b> array</p>
+    <p><b>Table data:</b> array of array</p>
+    <div id="tbl">
+        {{tbldata}}
+        <tbl :data="tbldata" name="testtbl" :columns="cols" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover"></tbl>
+    </div>
+    <hr>
+    <!--<div id="tbl200">
+        {{tbldata}}
+        <tbl :data="tbldata" name="testtbl" :columns="{'name':{show:true}, 'id':{show:true, enableEdit:true, type:'number'}, 'country':{show:true, type: 'select', options:{usa:'США',france:'Франция',russia:'Россия',canada:'Канада'}}}"
+            @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
+        </tbl>
+    </div>-->
+    <h2>Variant 2</h2>
+    <p><b>Config columns:</b> object</p>
+    <p><b>Table data:</b> array of object</p>
+    <div id="tbl2">
+        {{tbldata}}
+        <tbl :data="tbldata" name="testtbl" :columns="cols" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
+        </tbl>
+    </div>
+    <h2>Variant 3</h2>
+    <p><b>Config columns:</b> none</p>
+    <p><b>Table data:</b> array of array</p>
+    <div id="tbl3">
+        {{tbldata}}
+        <tbl :data="tbldata" name="testtbl" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
+        </tbl>
+    </div>
+    <h2>Variant 4</h2>
+    <p><b>Config columns:</b> none</p>
+    <p><b>Table data:</b> array of object</p>
+    <div id="tbl4">
+        {{tbldata}}
+        <tbl :data="tbldata" name="testtbl" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
+        </tbl>
+    </div>
+
+
+
+    <script>
+        // configs
+        var testTable1 = [
+            { id: 0, name: "John", family: "Smith", country: "Usa", town: "Washington" },
+            { id: 1, name: "Pier", family: "Marten", country: "France", town: "Marcel" },
+            { id: 2, name: "Иван", family: "Иванов", country: "Россия", town: "Воронеж" },
+            { id: 3, name: "Аристарх", family: "Кульман", country: "Россия", town: "Гдов" },
+            { id: 4, name: "Станслав", family: "Курцевич", country: "Россия", town: "Шахты" },
+            { id: 5, name: "David", family: "Johnson", country: "Usa", town: "Springfield" },
+            { id: 6, name: "Dale", family: "Piterson", country: "Usa", town: "Denver" },
+            { id: 7, name: "Петр", family: "Иванко", country: "Россия", town: "Пермь" },
+            { id: 8, name: "Madeleine", family: "Samson", country: "France", town: "Marcel" },
+            { id: 9, name: "Renee", family: "Ringuette", country: "France", town: "Paris" },
+            { id: 10, name: "Ирина", family: "Симоненко", country: "Россия", town: "Воронеж" },
+            { id: 11, name: "Мария", family: "Иванова", country: "Россия", town: "Шахты" }
+        ];
+
+        var testTable2 = [
+            [0, "John", "Smith", "Usa", "Washington"],
+            [1, "Pier", "Marten", "France", "Marcel"],
+            [2, "Иван", "Иванов", "Россия", "Воронеж"],
+            [3, "Аристарх", "Кульман", "Россия", "Гдов"],
+            [4, "Станслав", "Курцевич", "Россия", "Шахты"],
+            [5, "David", "Johnson", "Usa", "Springfield"],
+            [6, "Dale", "Piterson", "Usa", "Denver"],
+            [7, "Петр", "Иванко", "Россия", "Пермь"],
+            [8, "Madeleine", "Samson", "France", "Marcel"],
+            [9, "Renee", "Ringuette", "France", "Paris"],
+            [10, "Ирина", "Симоненко", "Россия", "Воронеж"],
+            [11, "Мария", "Иванова", "Россия", "Шахты"]
+        ];
+
+        var testTable3 = [
+            { id: 0, name: "John", family: "Smith", country: "usa", town: "Washington", img: "https://a.deviantart.net/avatars/m/r/mrburns-fanclub.jpg" },
+            { id: 1, name: "Pier", family: "Marten", country: "france", town: "Marcel", img: "https://iccup.com/upload/images/avatar/n1326946.jpg" },
+            { id: 2, name: "Иван", family: "Иванов", country: "russia", town: "Воронеж", img: "https://a.deviantart.net/avatars/c/u/cute-fuckin-animals.jpg" },
+            { id: 3, name: "Аристарх", family: "Кульман", country: "russia", town: "Гдов", img: "http://vetgalaxy.ru/media/widgetkit/2sldie-6a2f137848702ede04df3e82bc303547.jpg" },
+            { id: 4, name: "Станслав", family: "Курцевич", country: "russia", town: "Шахты", img: "https://a.deviantart.net/avatars/x/x/xxawesomeanimalsxx.jpg?8" },
+            { id: 5, name: "David", family: "Johnson", country: "usa", town: "Springfield", img: "https://a.deviantart.net/avatars/c/a/cats-wolfs.jpg" },
+            { id: 6, name: "Dale", family: "Piterson", country: "usa", town: "Denver", img: "https://a.deviantart.net/avatars/0/_/0-animal-lovers-0.jpg" },
+            { id: 7, name: "Петр", family: "Иванко", country: "russia", town: "Пермь", img: "http://rumata.info/images/2018/03/19/143622/thumb_koty-i-koshki_1.jpg" },
+            { id: 8, name: "Madeleine", family: "Samson", country: "france", town: "Marcel", img: "https://a.deviantart.net/avatars/c/r/crazy-cat-lady-group.jpg" },
+            { id: 9, name: "Renee", family: "Ringuette", country: "france", town: "Paris", img: "http://vetgalaxy.ru/media/widgetkit/2sldie-6a2f137848702ede04df3e82bc303547.jpg" },
+            { id: 10, name: "Ирина", family: "Симоненко", country: "russia", town: "Воронеж", img: "http://vetgalaxy.ru/media/widgetkit/2sldie-6a2f137848702ede04df3e82bc303547.jpg" },
+            { id: 11, name: "Мария", family: "Иванова", country: "russia", town: "Шахты", img: "https://a.deviantart.net/avatars/d/i/digitaladoptables.jpg" }
+        ];
+
+        var columns1 = ["ID", "Name", "Family", "Country", "Town", "Blank field"];
+        var columns2 = {
+            'name': {
+                show: true
+            },
+            'family': {
+                show: true
+            },
+            'id': {
+                show: true,
+                enableEdit: false,
+                type: 'number'
+            },
+            'country': {
+                show: true,
+                type: 'select',
+                options: {
+                    usa: 'США',
+                    france: 'Франция',
+                    russia: 'Россия',
+                    canada: 'Канада'
+                }
+            },
+            town: {
+                show: true,
+                type: "string"
+            },
+            img: {
+                show: true,
+                type: "image",
+                enableEdit: true
+            }
+        };
+        var columns3 = ["name", "family", "country", "town"];
+
+        // Start
+        Vue.component("tbl", VueTable.Table());
+
+        // Var 1
+        var tbl1 = new Vue({
+            el: "#tbl",
+            data: {
+                tbldata: testTable2,
+                cols: columns1
+            },
+            methods: {
+                changeCell(e) {
+                    console.log("changeCell", e);
+                }
+            },
+            computed: {},
+        });
+        // Var 2
+        var tbl2 = new Vue({
+            el: "#tbl2",
+            data: {
+                tbldata: testTable3,
+                cols: columns2
+            },
+            methods: {
+                changeCell(e) {
+                    console.log("changeCell", e);
+                }
+            },
+            computed: {},
+        });
+        // Var 3
+        var tbl3 = new Vue({
+            el: "#tbl3",
+            data: {
+                tbldata: testTable2
+            },
+            methods: {
+                changeCell(e) {
+                    console.log("changeCell", e);
+                }
+            },
+            computed: {},
+        });
+        // Var 4
+            var tbl4 = new Vue({
+                el: "#tbl4",
+                data: {
+                    tbldata: testTable3
+                },
+                methods: {
+                    changeCell(e) {
+                        console.log("changeCell", e);
+                    }
+                },
+                computed: {},
+            });
+
+    </script>
+</body>
+
+</html>
