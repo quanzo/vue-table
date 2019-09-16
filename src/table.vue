@@ -80,7 +80,9 @@ export default {
       editCell: {},
       events: {},
       undo: undo.default,
-      sort: []
+      sort: [],
+      cellClasses: [],
+      rowClasses: []
     };
   },
   methods: {
@@ -217,7 +219,7 @@ export default {
         this.columnEditable(col)
       );
     },
-    
+
     /**
      *
      */
@@ -254,7 +256,7 @@ export default {
     getColName(index) {
       if (this.columnsConfig) {
         if (typeof this.columnsConfig[index] != "undefined") {
-          let colData = this.columns[index];
+          let colData = this.columnsConfig[index];
           if (typeof colData.name == "string" && colData.name) {
             return colData.name;
           }
@@ -278,7 +280,27 @@ export default {
       return classes;
     },
     getRowClasses(row) {
-      return "";
+      let cls = [];      
+      if (typeof this.rowClasses[row] != "undefined") {
+        if (!Array.isArray(this.rowClasses[row])) {
+          var arGivenClasses = this.rowClasses[row].trim().split(" ");
+        } else {
+          var arGivenClasses = this.rowClasses[row];
+        }
+        if (arGivenClasses.length > 0) {
+          var arAddToCls = arGivenClasses.filter(v => {
+            return cls.indexOf(v) == -1;
+          });
+          if (arAddToCls.length > 0) {
+            cls.push(...arAddToCls);
+          }
+        }
+      }
+      return cls.join(" ");
+    },
+    setRowClasses(row, classes) {      
+      //this.rowClasses[row] = classes;
+      this.$set(this.rowClasses, row, classes);
     },
 
     /**
@@ -288,11 +310,35 @@ export default {
      * @return {string}
      */
     getCellClasses(row, col) {
-      let cls = "editable";
+      let cls = ["editable"];
       if (!this.columnEditable(col)) {
-        cls = "read-only";
+        cls[0] = "read-only";
       }
-      return cls;
+      if (typeof this.cellClasses[row] != "undefined" && typeof this.cellClasses[row][col] != "undefined") {
+        let stored = this.cellClasses[row][col];
+        if (!Array.isArray(stored)) {
+          var arGivenClasses = stored.trim().split(" ");
+        } else {
+          var arGivenClasses = stored;
+        }
+        if (arGivenClasses.length > 0) {
+          var arAddToCls = arGivenClasses.filter(v => {
+            return cls.indexOf(v) == -1;
+          });
+          if (arAddToCls.length > 0) {
+            cls.push(...arAddToCls);
+          }
+        }
+      }
+      return cls.join(" ");
+    },
+
+    setCellClasses(row, col, classes) {
+      if (typeof this.cellClasses[row] == "undefined") {
+        this.cellClasses[row] = {};
+      }
+      //this.cellClasses[row][col] = classes;
+      this.$set(this.cellClasses[row], col, classes);
     },
 
     /**
@@ -388,7 +434,7 @@ export default {
 
     insertRow(afterRow, ...value) {
       if (this.isRow(afterRow)) {
-        this.data.splice(afterRow+1, 0, ...value);
+        this.data.splice(afterRow + 1, 0, ...value);
       }
     },
     deleteRow(row, count = 1) {
@@ -482,7 +528,11 @@ export default {
       row: this.row,
       setRow: this.setRow,
       insertRow: this.insertRow,
-      deleteRow: this.deleteRow
+      deleteRow: this.deleteRow,
+      getCellClasses: this.getCellClasses,
+      getRowClasses: this.getRowClasses,
+      setCellClasses: this.setCellClasses,
+      setRowClasses: this.setRowClasses
     };
   }
 };

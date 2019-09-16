@@ -2,8 +2,8 @@
 
 <head>
     <meta charset="utf-8">
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@quanzo/vue-table"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@quanzo/vue-table@latest"></script>
     <script src="../dist/bundle.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,6 +45,23 @@
             background-color: #fafafa;
             color: #888;
         }
+
+        td.class1{
+            background-color: #eee;
+        }
+        td.class2{
+            background-color: #8dc5a6;
+        }
+        td.class3{
+            background-color: #a395c5;
+        }
+        td.class4{
+            background-color: #c4c58e;
+        }
+        td.class5{
+            background-color: #c58fb0;
+        }
+
     </style>
 </head>
 
@@ -56,6 +73,11 @@
         </tbl>
     </div>
     <hr>-->
+    <h2>Note</h2>
+    <ul>
+        <li>Click on the header header to sort. Click on another heading to continue sorting.</li>
+        <li>Double click on the cell to edit (if enabled). Click on another area to complete.</li>
+    </ul>
     <h2>Variant 1</h2>
     <p><b>Config columns:</b> array</p>
     <p><b>Table data:</b> array of array</p>
@@ -89,7 +111,7 @@
     <h2>Variant 4</h2>
     <p><b>Config columns:</b> none</p>
     <p><b>Table data:</b> array of object</p>
-    <p>Test slave component: randomize swap two line</p>
+    <p><b></b>Test subcomponent:</b> randomize swap two line, set random classes to cell</p>
     <div id="tbl4">
         {{tbldata}}
         <tbl :data="tbldata" name="testtbl" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
