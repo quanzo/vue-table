@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://cdn.jsdelivr.net/npm/@quanzo/vue-table"></script>
-    <script src="..555/dist/bundle.js"></script>
+    <script src="/vue.js"></script>
+    <script src="../dist/bundle.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
@@ -45,6 +46,10 @@
             background-color: #fafafa;
             color: #888;
         }
+        tr.blocked {
+            background-color: #fafafa;
+            color: #888;
+        }
 
         td.class1{
             background-color: #eee;
@@ -82,8 +87,12 @@
     <p><b>Config columns:</b> array</p>
     <p><b>Table data:</b> array of array</p>
     <div id="tbl">
+        <hr>
         {{tbldata}}
-        <tbl :data="tbldata" name="testtbl" :columns="cols" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover"></tbl>
+        <hr>
+        {{checkedRows}}
+        <hr>
+        <tbl :data="tbldata" name="testtbl" :columns="cols" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover" @event-checked="onChecked"></tbl>
     </div>
     <hr>
     <!--<div id="tbl200">
@@ -97,7 +106,8 @@
     <p><b>Table data:</b> array of object</p>
     <div id="tbl2">
         {{tbldata}}
-        <tbl :data="tbldata" name="testtbl" :columns="cols" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
+        <hr>
+        <tbl :data="tbldata" name="testtbl" :columns="cols" :blocked-rows="[false, false, true]" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
         </tbl>
     </div>
     <h2>Variant 3</h2>
@@ -219,6 +229,7 @@
         var columns3 = ["name", "family", "country", "town"];
 
         // Start
+        Vue.config.devtools = true;
         Vue.component("tbl", VueTable.Table());
         Vue.component("random", VueTable.TestSlave());
 
@@ -227,11 +238,15 @@
             el: "#tbl",
             data: {
                 tbldata: testTable2,
-                cols: columns1
+                cols: columns1,
+                checkedRows: []
             },
             methods: {
                 changeCell(e) {
                     console.log("changeCell", e);
+                },
+                onChecked(e) {
+                    this.checkedRows = e.current;
                 }
             },
             computed: {},
@@ -264,6 +279,9 @@
             computed: {},
         });
         // Var 4
+            //var tblComp4 = Vue.extend(VueTable.Table());
+            //console.log(tblComp4);
+
             var tbl4 = new Vue({
                 el: "#tbl4",
                 data: {

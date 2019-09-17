@@ -43,6 +43,8 @@ export default {
         }
     },
 
+    render() { },
+
     mounted() {
         var component = this;
         setInterval(component.tick, 1000);
