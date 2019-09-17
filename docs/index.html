@@ -2,9 +2,9 @@
 
 <head>
     <meta charset="utf-8">
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@quanzo/vue-table"></script>
-    <script src="/vue.js"></script>
+    <!--<script src="https://cdn.jsdelivr.net/npm/vue"></script>-->
+    <script src="vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@quanzo/vue-table"></script>    
     <script src="../dist/bundle.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -87,9 +87,9 @@
     <p><b>Config columns:</b> array</p>
     <p><b>Table data:</b> array of array</p>
     <div id="tbl">
-        <hr>
+        <h3>Table array</h3>
         {{tbldata}}
-        <hr>
+        <h3>Checked array</h3>
         {{checkedRows}}
         <hr>
         <tbl :data="tbldata" name="testtbl" :columns="cols" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover" @event-checked="onChecked"></tbl>
@@ -104,26 +104,31 @@
     <h2>Variant 2</h2>
     <p><b>Config columns:</b> object</p>
     <p><b>Table data:</b> array of object</p>
+    <p>ID is read-only and disable sort</p>
+    <p>row #0 and #2 blocked</p>
     <div id="tbl2">
+        <h3>Table array</h3>
         {{tbldata}}
         <hr>
-        <tbl :data="tbldata" name="testtbl" :columns="cols" :blocked-rows="[false, false, true]" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
-        </tbl>
+        <tbl :data="tbldata" name="testtbl" :columns="cols" :blocked-rows="[true, false, true]" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover"></tbl>
     </div>
     <h2>Variant 3</h2>
     <p><b>Config columns:</b> none</p>
     <p><b>Table data:</b> array of array</p>
     <div id="tbl3">
+        <h3>Table array</h3>
         {{tbldata}}
-        <tbl :data="tbldata" name="testtbl" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
-        </tbl>
+        <hr>
+        <tbl :data="tbldata" name="testtbl" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover"></tbl>
     </div>
     <h2>Variant 4</h2>
     <p><b>Config columns:</b> none</p>
     <p><b>Table data:</b> array of object</p>
     <p><b></b>Test subcomponent:</b> randomize swap two line, set random classes to cell</p>
     <div id="tbl4">
+        <h3>Table array</h3>
         {{tbldata}}
+        <hr>
         <tbl :data="tbldata" name="testtbl" @event-end-edit-cell="changeCell" classes="table table-bordered table-hover">
             <random></random>
         </tbl>
@@ -204,7 +209,8 @@
             'id': {
                 show: true,
                 enableEdit: false,
-                type: 'number'
+                type: 'number',
+                enableSort: false
             },
             'country': {
                 show: true,
