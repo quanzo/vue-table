@@ -23,7 +23,7 @@ export default {
   methods: {},
   computed: {
     viewType() {
-        var t = "text";
+        var t = "string";
         if (typeof this.config.type != "undefined") {
             if (this.config.type == "image") {
                 return this.config.type;

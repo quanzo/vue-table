@@ -122,9 +122,13 @@ town: {
     enableSort: true,
     type: “select”,
     options: {
-	msk: “Moscow”,
-	spb: “Sankt-Petersburg”
+    msk: “Moscow”,
+    spb: “Sankt-Petersburg”
     }
 }
 ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+### type = image
+
+edit as string, view as image
