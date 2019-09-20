@@ -196,6 +196,7 @@ export default {
       return 0;
     },
     onSort(col) {
+      this.onEndEdit();
       if (!this.allowSort(col)) {
         return;
       }
@@ -297,6 +298,7 @@ export default {
     }, // end onSort
 
     onInsertRow(row, event) {
+      this.onEndEdit();
       //console.log(row, event);
       if (!this.enableInserRow) {
         //console.log(this.enableInserRow);
@@ -338,6 +340,7 @@ export default {
      * @param {object} state
      */
     restoreState(state) {
+      this.onEndEdit();
       console.log("Restore state");
       if (state.operation == "edit") {
         var e = {
@@ -704,7 +707,6 @@ export default {
      * Standardized table column configuration
      */
     columnsConfig() {
-      console.log("Columns config calculate");      
       if (typeof this.columns == "object") {
         var res = {};
         if (Array.isArray(this.columns)) {          
