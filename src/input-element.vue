@@ -1,7 +1,7 @@
 <template>    
     <span>
-        <input v-if="inputType == 'string' || inputType == 'image'" type="text" :class="classes" :style="styles" :value="value" @input="$emit('input', $event.target.value)" @click.stop="onClickInput" @keyup.13="onEndEdit">
-        <input v-if="inputType == 'number'" type="number" :class="classes" :style="styles" :value="value" @input="$emit('input', $event.target.value)" @click.stop="onClickInput" @keyup.13="onEndEdit">
+        <input v-if="inputType == 'string' || inputType == 'image'" type="text" :class="classes" :style="styles" :value="value" @input="$emit('input', $event.target.value)" @click.stop="onClickInput" @keyup.enter="onEndEdit">
+        <input v-if="inputType == 'number'" type="number" :class="classes" :style="styles" :value="value" @input="$emit('input', $event.target.value)" @click.stop="onClickInput" @keyup.enter="onEndEdit">
         <select v-if="inputType == 'select'" :class="classes" :style="styles" :value="value" @input="$emit('input', $event.target.value)" @click.stop="onClickInput">
             <option v-for="(text, key) in options" :key="key" :value="key">{{text}}</option>
         </select>

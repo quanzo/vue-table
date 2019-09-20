@@ -7,6 +7,7 @@ if (typeof (window.VueGlobalUndo) == "undefined") {
             this.undo.push(state);
         },
         restore() {
+            console.log("Ctrl+z");
             if (this.undo.length > 0) {
                 let component = this.components.pop();
                 let state = this.undo.pop();
@@ -14,10 +15,20 @@ if (typeof (window.VueGlobalUndo) == "undefined") {
                     component.restoreState(state);
                 }
             }    
+        },
+        clean(component) { // delete state of component
+            let count = 0;
+            for (let i = this.components.length; i >= 0; i--) {
+                if (this.components[i] === component) {
+                    this.components.splice(i, 1);
+                    count++;
+                }
+            }
+            return count;
         }
     };
     window.addEventListener("keyup", function (e) {
-        if (e.ctrlKey && (e.key == "Z" || e.key == "z")) {
+        if (e.ctrlKey && e.code == "KeyZ" && !e.shiftKey) {
             VueGlobalUndo.restore();
         }
     });

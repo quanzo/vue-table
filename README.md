@@ -94,7 +94,8 @@ name: {
     name:”User name”,
     enableEdit: false,
     enableSort: false,
-    type:”string” // or do not set the parameter
+    type:”string”, // or do not set the parameter
+    default: "" // or not set
 }
 ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,7 +108,8 @@ id: {
     name:”Identify”,
     enableEdit: false,
     enableSort: false,
-    type:”number”
+    type:”number”,
+    default: 0 // or not set
 }
 ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -122,9 +124,10 @@ town: {
     enableSort: true,
     type: “select”,
     options: {
-    msk: “Moscow”,
-    spb: “Sankt-Petersburg”
-    }
+        msk: “Moscow”,
+        spb: “Sankt-Petersburg”
+    },
+    default: "spb"
 }
 ...
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

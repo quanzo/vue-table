@@ -12,19 +12,19 @@
       </thead>
       
       <tbody>
-      <tr v-for="(line, lindex) in data" :key="lindex" :class="getRowClasses(lindex)" :data-blocked="blockRow(lindex)">
+      <tr v-for="(line, lindex) in data" :key="lindex" :class="getRowClasses(lindex)" :data-blocked="blockRow(lindex)" @click.ctrl="onInsertRow(lindex, $event)">
           
           <td v-if="enableChecked"><input type="checkbox" :name="'row'+lindex" v-model="tblCheckedRows[lindex]"></td>
           
           <td v-if="colsType == 2 || colsType == 1" v-for="(col, cindex) in columnsConfig" :key="cindex" @dblclick="onEditEnable({row:lindex, col:cindex})" :class="getCellClasses(lindex, cindex)">
-              <span v-if="ifEditStart && allowEdit(lindex, cindex)" @event-input-end-edit="onEndEdit"><input-element v-model="data[lindex][cindex]" :column-key="cindex"></input-element></span>
+              <span v-if="ifEditStart && allowEdit(lindex, cindex)"><input-element v-model="data[lindex][cindex]" :column-key="cindex" @event-input-end-edit="onEndEdit"></input-element></span>
               <span v-else>
                   <view-element :column-key="cindex" :value="data[lindex][cindex]"></view-element>
               </span>
-          </td>          
+          </td>
           
           <td v-if="colsType == 0" v-for="(col, cindex) in line" :key="cindex" @dblclick="onEditEnable({row:lindex, col:cindex})" :class="getCellClasses(lindex, cindex)">
-              <span v-if="ifEditStart && allowEdit(lindex, cindex)"><input-element v-model="data[lindex][cindex]" :column-key="cindex"></input-element></span>
+              <span v-if="ifEditStart && allowEdit(lindex, cindex)"><input-element v-model="data[lindex][cindex]" :column-key="cindex" @event-input-end-edit="onEndEdit"></input-element></span>
               <span v-else>
                   <view-element :column-key="cindex" :value="data[lindex][cindex]"></view-element>
               </span>
@@ -33,6 +33,7 @@
       </tr>
       </tbody>
     </table>
+    <button @click="onInsertRow($event)">+</button>
     <slot></slot>
     </div>
 </template>
@@ -76,6 +77,10 @@ export default {
       default: true
     },
     enableChecked: {
+      type: Boolean,
+      default: true
+    },
+    enableInserRow: {
       type: Boolean,
       default: true
     },
@@ -133,13 +138,13 @@ export default {
      */
     onEditEnable(event) {
       this.editCell = {
+        operation: "edit",
         row: event.row,
         col: event.col,
-        initial: this.data[event.row][event.col]
+        initial: this.data[event.row][event.col],
+        data: this.data[event.row]
       };
-      if (this.useUndo) {
-        this.undo.push(this, this.editCell);
-      }
+      
       this.ifEditStart = true;
     },
     /**
@@ -151,6 +156,9 @@ export default {
           this.data[this.editCell.row][this.editCell.col] !=
           this.editCell.initial
         ) {
+          if (this.useUndo) {
+            this.undo.push(this, this.editCell);
+          }
           var e = {
             row: this.editCell.row,
             col: this.editCell.col,
@@ -288,12 +296,64 @@ export default {
       }
     }, // end onSort
 
+    onInsertRow(row, event) {
+      //console.log(row, event);
+      if (!this.enableInserRow) {
+        //console.log(this.enableInserRow);
+        return;
+      }
+      if (this.colsType == 0 || this.colsType == 1) {
+        var newRow = [];
+        console.log(this.columnsConfig);
+      } else {
+        var newRow = {};
+      }
+      if (this.columnsConfig) {
+        for (let i in this.columnsConfig) {
+          newRow[i] = this.columnsConfig[i].default;
+        }
+      } else {
+        
+        if (this.data.length > 0) {
+          if (!Array.isArray(this.data[0])) {
+            newRow = {};
+          }          
+          for (let i in this.data[0]) {
+            newRow[i] = "";
+          }
+        }
+      }      
+      this.insertRow(row, newRow);
+      var e = {
+        afterRow: row,
+        data: newRow
+      }
+      console.log("event-new-row", e);
+      this.$emit("event-new-row", e);
+      this.startEvent("event-new-row", e);
+    },
+
     /**
      * Set cell state. Needed to cancel editing actions. Восстановление состояния. См onEditEnable
      * @param {object} state
      */
     restoreState(state) {
-      this.data[state.row][state.col] = state.initial;
+      console.log("Restore state");
+      if (state.operation == "edit") {
+        var e = {
+          row: state.row,
+          col: state.col,
+          initial: state.data[state.col],
+          result: state.initial,
+          data: state.data
+        };
+        //state.data[state.col] = state.initial;
+        this.$set(state.data, state.col, state.initial);        
+      
+        console.log("event-end-edit-cell", e);
+        this.$emit("event-end-edit-cell", e);
+        this.startEvent("event-end-edit-cell", e);
+      }      
     },
 
     /**
@@ -602,7 +662,8 @@ export default {
      */
     load(table) {
       if (Array.isArray(table)) {
-        this.$set(this, data, table);
+        this.undo.clean(this);
+        this.$set(this, data, table);        
         return true;
       }
       return false;
@@ -639,18 +700,40 @@ export default {
         return 2;
       }
     },
+    /**
+     * Standardized table column configuration
+     */
     columnsConfig() {
-      if (Array.isArray(this.columns)) {
-        var res = {};
-        for (var key in this.columns) {
-          res[key] = {
-            name: this.columns[key]
-          };
-        }
-        return res;
-      }
+      console.log("Columns config calculate");      
       if (typeof this.columns == "object") {
-        return this.columns;
+        var res = {};
+        if (Array.isArray(this.columns)) {          
+          for (let key in this.columns) {
+            res[key] = {
+              name: this.columns[key],
+              type: "string",
+              default: ""
+            };
+          }
+        } else {
+          res = this.columns;
+        }
+        for (let key in res) {
+          if (typeof res[key]["type"] == "undefined") {
+            res[key]["type"] = "string";
+          }
+          if (typeof res[key]["default"] == "undefined") {
+            switch(res[key]["type"]) {
+              case "number":
+                res[key]["default"] = 0;
+                break;
+              default:
+                res[key]["default"] = "";
+                break;
+            } // end switch
+          }
+        }        
+        return res;
       }
       return false;
     },
@@ -700,7 +783,7 @@ export default {
     var tbl = this;
     window.addEventListener("click", function(e) {
       tbl.onEndEdit();
-    });
+    });    
   },
   provide() {
     var tbl = this;
