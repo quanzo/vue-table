@@ -33,7 +33,6 @@
       </tr>
       </tbody>
     </table>
-    <button @click="onInsertRow($event)">+</button>
     <slot></slot>
     </div>
 </template>
@@ -461,6 +460,9 @@ export default {
       if (idx != -1) {
         classes += "sort sort-" + this.tblSort[idx].direct;
       }
+      if (!this.enableSort) {
+        classes += (classes ? " ": "") + "disable-sort";
+      }
       return classes;
     },
 
@@ -468,6 +470,9 @@ export default {
       let cls = [];
       if (this.blockRow(row)) {
         cls[cls.length] = "blocked";
+      }
+      if (!this.enableEdit) {
+        cls[cls.length] = "disable-edit";
       }
       if (typeof this.tblRowClasses[row] != "undefined") {
         if (!Array.isArray(this.tblRowClasses[row])) {
