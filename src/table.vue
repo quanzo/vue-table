@@ -72,7 +72,15 @@ export default {
       type: Boolean,
       default: true
     },
+    enableEdit: {
+      type: Boolean,
+      default: true
+    },
     defEnableSort: {
+      type: Boolean,
+      default: true
+    },
+    enableSort: {
       type: Boolean,
       default: true
     },
@@ -372,12 +380,12 @@ export default {
         
         if (typeof this.columnsConfig[col]["enableEdit"] != "undefined") {
           if (typeof this.columnsConfig[col]["enableEdit"] == "function") {
-            return this.columnsConfig.enableEdit[col](col);
+            return this.enableEdit && this.columnsConfig.enableEdit[col](col);
           }
-          return !!this.columnsConfig[col].enableEdit;
+          return this.enableEdit && !!this.columnsConfig[col].enableEdit;
         }
       }
-      return this.defEnableEdit;
+      return this.enableEdit && this.defEnableEdit;
     },
 
     /**
@@ -402,10 +410,10 @@ export default {
     allowSort(col) {
       if (this.colsType == 2) {
         if (typeof this.columns[col].enableSort == "boolean") {
-          return this.columns[col].enableSort;
+          return this.enableSort && this.columns[col].enableSort;
         }
       }
-      return this.defEnableSort;
+      return this.enableSort && this.defEnableSort;
     },
 
     /**
